@@ -1,5 +1,5 @@
 name: FastCrystals
 version: '${version}'
-author: Villagers654
+author: [Villagers654, Infnoxx]
 main: club.aurorapvp.fastcrystals.FastCrystals
 api-version: '1.21'

@@ -1,4 +1,9 @@
 # FastCrystals
+
+## Updated to 1.21 by Infnox
+* Optimizations and dealing with some packets is still pending, will be done soon.
+
+
 Makes placing crystals really fast
 
 Based on the work by [Jyguy](https://github.com/Jyguy) in [mcpvp-club/FasterCrystals](https://github.com/mcpvp-club/FasterCrystals), with some improvements
