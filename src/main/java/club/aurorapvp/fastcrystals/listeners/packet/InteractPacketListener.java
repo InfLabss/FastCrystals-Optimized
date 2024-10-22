@@ -72,15 +72,15 @@ public class InteractPacketListener implements PacketListener {
     Location blockLoc = crystal.getLocation().subtract(0.5, 1.0, 0.5);
 
     RayTraceResult result = player.getPlayer().rayTraceBlocks(
-        player.getGameMode() == GameMode.CREATIVE ? 5.0 : 4.5,
-        FluidCollisionMode.NEVER);
+            player.getGameMode() == GameMode.CREATIVE ? 5.0 : 4.5,
+            FluidCollisionMode.NEVER);
 
     if (result == null || result.getHitBlock() == null) {
       return;
     }
 
     if (result.getHitBlock().getType() != Material.OBSIDIAN
-        && result.getHitBlock().getType() != Material.BEDROCK) {
+            && result.getHitBlock().getType() != Material.BEDROCK) {
       return;
     }
 
@@ -90,14 +90,14 @@ public class InteractPacketListener implements PacketListener {
 
     int packetEntityId = FastCrystals.getLastEntityId() + 1;
     final boolean shouldSendPacket = !FastCrystals.containsCrystal(crystal.getLocation())
-        && FastCrystals.getCrystal(packetEntityId) == null;
+            && FastCrystals.getCrystal(packetEntityId) == null;
 
     if (shouldSendPacket) {
       WrapperPlayServerSpawnEntity spawnCrystal = new WrapperPlayServerSpawnEntity(
-          FastCrystals.getLastEntityId() + 1, Optional.of(UUID.randomUUID()),
-          EntityTypes.END_CRYSTAL,
-          new Vector3d(crystal.getX(), crystal.getY(), crystal.getZ()), crystal.getPitch(),
-          crystal.getYaw(), crystal.getYaw(), 0, Optional.of(new Vector3d()));
+              FastCrystals.getLastEntityId() + 1, Optional.of(UUID.randomUUID()),
+              EntityTypes.END_CRYSTAL,
+              new Vector3d(crystal.getX(), crystal.getY(), crystal.getZ()), crystal.getPitch(),
+              crystal.getYaw(), crystal.getYaw(), 0, Optional.of(new Vector3d()));
 
       event.getUser().sendPacket(spawnCrystal);
     }
@@ -114,17 +114,17 @@ public class InteractPacketListener implements PacketListener {
         loc.add(0.5, 1.0, 0.5);
 
         Set<Entity> nearbyEntities = new HashSet<>(
-            loc.getWorld().getNearbyEntities(loc, 0.5, 1, 0.5));
+                loc.getWorld().getNearbyEntities(loc, 0.5, 1, 0.5));
 
         if (nearbyEntities.isEmpty()) {
           EnderCrystal crystal = (EnderCrystal) loc.getWorld()
-              .spawnEntity(loc.subtract(0.0, 1.0, 0.0), EntityType.ENDER_CRYSTAL);
+                  .spawnEntity(loc.subtract(0.0, 1.0, 0.0), EntityType.ENDER_CRYSTAL);
 
           crystal.setShowingBottom(false);
 
           if (shouldSendPacket && crystal.getEntityId() != packetEntityId) {
             WrapperPlayServerDestroyEntities crystalDestroy = new WrapperPlayServerDestroyEntities(
-                crystal.getEntityId());
+                    crystal.getEntityId());
 
             event.getUser().sendPacket(crystalDestroy);
           }

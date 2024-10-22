@@ -19,11 +19,14 @@ repositories {
     maven {
         url = "https://repo.codemc.io/repository/maven-releases/"
     }
+
+    maven {
+        url = uri("https://repo.codemc.io/repository/maven-releases/")
+    }
 }
 
 dependencies {
-    implementation "com.github.retrooper.packetevents:spigot:2.2.1"
-
+    implementation("com.github.retrooper:packetevents-spigot:2.5.0")
     compileOnly 'io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT'
 }
 
@@ -32,11 +35,13 @@ build {
 }
 
 shadowJar {
-    minimize()
     archiveFileName.set("${project.name}-${project.version}.jar")
     relocate 'com.github.retrooper.packetevents', 'club.aurorapvp.fastcrystals.shaded.com.github.retrooper.packetevents'
-    relocate 'io.github.retrooper.packetevents', 'club.aurorapvp.fastcrystals.shaded.io.github.retrooper.packetevents'
+
+    // Include all runtime dependencies
+    configurations = [project.configurations.runtimeClasspath]
 }
+
 
 def targetJavaVersion = 17
 java {

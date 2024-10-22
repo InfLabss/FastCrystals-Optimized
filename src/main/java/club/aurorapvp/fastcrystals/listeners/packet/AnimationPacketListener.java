@@ -22,6 +22,23 @@ import org.bukkit.util.Vector;
 
 public class AnimationPacketListener implements PacketListener {
 
+  private static final EntityType CRYSTAL_TYPE;
+
+  static {
+    EntityType crystalType;
+    try {
+      crystalType = EntityType.valueOf("END_CRYSTAL");
+    } catch (IllegalArgumentException e) {
+      try {
+        crystalType = EntityType.valueOf("ENDER_CRYSTAL");
+      } catch (IllegalArgumentException ex) {
+        crystalType = null;
+        System.err.println("Could not find EntityType for End Crystal");
+      }
+    }
+    CRYSTAL_TYPE = crystalType;
+  }
+
   @Override
   public void onPacketReceive(PacketReceiveEvent event) {
     if (event.getUser().getUUID() == null) {
@@ -49,17 +66,17 @@ public class AnimationPacketListener implements PacketListener {
     Location eyeLoc = player.getEyeLocation();
 
     CompletableFuture<RayTraceResult> future = CompletableFuture.supplyAsync(() -> player.getWorld()
-        .rayTraceEntities(eyeLoc, player.getLocation().getDirection(), 3.0, 0.0,
-            entity -> {
-              if (entity.getType() != EntityType.PLAYER) {
-                return true;
-              }
+            .rayTraceEntities(eyeLoc, player.getLocation().getDirection(), 3.0, 0.0,
+                    entity -> {
+                      if (entity.getType() != EntityType.PLAYER) {
+                        return true;
+                      }
 
-              Player p = (Player) entity;
+                      Player p = (Player) entity;
 
-              return !player.getUniqueId().equals(p.getUniqueId())
-                  && p.getGameMode() != GameMode.SPECTATOR && player.canSee(p);
-            }), Bukkit.getScheduler().getMainThreadExecutor(FastCrystals.getInstance()));
+                      return !player.getUniqueId().equals(p.getUniqueId())
+                              && p.getGameMode() != GameMode.SPECTATOR && player.canSee(p);
+                    }), Bukkit.getScheduler().getMainThreadExecutor(FastCrystals.getInstance()));
 
     future.thenAcceptAsync(result -> {
       if (result == null) {
@@ -68,7 +85,8 @@ public class AnimationPacketListener implements PacketListener {
 
       Entity crystal = result.getHitEntity();
 
-      if (crystal == null || crystal.getType() != EntityType.ENDER_CRYSTAL) {
+      // Use the dynamically assigned CRYSTAL_TYPE
+      if (crystal == null || CRYSTAL_TYPE == null || crystal.getType() != CRYSTAL_TYPE) {
         return;
       }
 
@@ -78,14 +96,14 @@ public class AnimationPacketListener implements PacketListener {
 
       if (!crystal.getBoundingBox().contains(eyeLoc.toVector())) {
         RayTraceResult traceBlocks = player.getPlayer().rayTraceBlocks(
-            player.getGameMode() == GameMode.CREATIVE ? 5.0 : 4.5);
+                player.getGameMode() == GameMode.CREATIVE ? 5.0 : 4.5);
 
         if (traceBlocks != null) {
           Block block = traceBlocks.getHitBlock();
           Vector eyeLocV = eyeLoc.toVector();
           if (block != null) {
             if (eyeLocV.distanceSquared(traceBlocks.getHitPosition()) <= eyeLocV.distanceSquared(
-                result.getHitPosition())) {
+                    result.getHitPosition())) {
               return;
             }
 
@@ -97,7 +115,7 @@ public class AnimationPacketListener implements PacketListener {
       }
 
       WrapperPlayServerDestroyEntities crystalDestroy = new WrapperPlayServerDestroyEntities(
-          crystal.getEntityId());
+              crystal.getEntityId());
 
       event.getUser().sendPacket(crystalDestroy);
 

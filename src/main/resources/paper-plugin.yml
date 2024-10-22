@@ -2,4 +2,4 @@ name: FastCrystals
 version: '${version}'
 author: Villagers654
 main: club.aurorapvp.fastcrystals.FastCrystals
-api-version: '1.20'
+api-version: '1.21'
